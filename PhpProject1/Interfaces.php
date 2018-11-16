@@ -11,6 +11,14 @@
  *
  * @author dam
  */
+
+trait utilsPrecio{
+    public $iva =.21;
+    public function PVP(){
+        return $this->precio*(1+$this->iva);
+    }
+}
+
 interface precios{
     
     public function pvp();

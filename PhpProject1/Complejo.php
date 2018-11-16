@@ -29,3 +29,4 @@ class Complejo {
     }
 }
 $c = new Complejo();
+$c2 = new Complejo();
