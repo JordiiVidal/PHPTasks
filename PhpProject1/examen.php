@@ -204,6 +204,117 @@
     }
     $andorra = new Andorra(12.4);
     echo $andorra->precioESP();
+
+    /**PDO */
+
+    class Test{
+        private $conn;
+
+        function __construct(){
+
+            $server = 'localhost';
+            $user = 'root';
+            $password = '';
+            $db = 'pdo';
+
+            try {
+                $this->conn = new PDO("mysql:host=$server;dbname=$db", $user, $password);
+                $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            } catch (PDOException $e) {
+                echo "Connection failed: " . $e->getMessage();
+            }
+
+        }
+        function borrarAlumno($nombre,$apellido){
+
+            try {
+                
+                $st = $this->conn->prepare("delete from Alumno where nombre=:nombre and apellido=:apellido");
+                $st->execute([':nombre'=>$nombre,':apellido'=>$apellido]);
+                
+            } catch (Exception $ex) {
+                
+                throw new Exception($ex->getMessage());
+                
+            }
+
+        }
+        function insertarAlumno($nombre,$apellido){
+
+            try {
+                
+                $st = $this->conn->prepare("INSERT INTO Alumno (nombre,apellido) VALUES (?,?)");
+                $st->execute(array($nombre,$apellido));
+                
+            } catch (Exception $ex) {
+                
+                throw new Exception($ex->getMessage());
+                
+            }
+
+        }
+        function editarAlumno($id,$nombre){
+
+            try {
+                
+                $st = $this->conn->prepare("UPDATE Alumno SET nombre = ? WHERE id = ?");
+                $st->execute(array($nombre,$id));
+                
+            } catch (Exception $ex) {
+                
+                throw new Exception($ex->getMessage());
+                
+            }
+        }
+        function selectByName($nombre){
+
+            try {
+                
+                $st = $this->conn->prepare("SELECT * FROM Alumno WHERE nombre = ?");
+                $st->execute(array($nombre));
+                return $st->fetchAll(PDO::FETCH_OBJ);
+            
+            } catch (Exception $ex) {
+                
+                throw new Exception($ex->getMessage());
+                
+            }
+        }
+        function selectByNameA($nombre){
+
+            try {
+                
+                $st = $this->conn->prepare("SELECT * FROM Alumno WHERE nombre = ?");
+                $st->execute(array($nombre));
+                return $st->fetchAll(PDO::FETCH_ASSOC);
+            
+            } catch (Exception $ex) {
+                
+                throw new Exception($ex->getMessage());
+                
+            }
+        }
+        
+    }
+    $pdo = new Test();
+    $pdo->borrarAlumno('pedro','lopez');
+    $pdo->insertarAlumno('pedro','lopez');
+    $pdo->insertarAlumno('pedro','lopez');
+    $pdo->editarAlumno(2,'pedrosa');
+    $alumnos_result = $pdo->selectByName('pedro');
+    //object
+    foreach ($alumnos_result as $alumno) {
+
+            echo $alumno->nombre;
+
+    }
+    $alumnos_resultA = $pdo->selectByNameA('pedro');
+    //value
+    foreach ($alumnos_resultA as  $value) {
+
+        echo $value['nombre'];
+
+    }
     
 
 
